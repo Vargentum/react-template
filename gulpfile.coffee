@@ -6,6 +6,7 @@ config   = require('./config.json')
 
 gulp.task 'scripts', ->
   gulp.src('./src/**/*.js')
+    .pipe($.plumber())
     .pipe($.concat('app.js'))
     .pipe($.babel())
     .pipe(gulp.dest('./app'))
