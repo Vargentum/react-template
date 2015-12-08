@@ -1,14 +1,21 @@
-gulp     = require('gulp')
 $        = require('gulp-load-plugins')()
-config   = require('./config.json')
+gulp     = require 'gulp'
+config   = require './config.json'
+babelify = require 'babelify'
 
 
 
 gulp.task 'scripts', ->
-  gulp.src('./src/**/*.js')
+  gulp.src('./src/app.jsx')
     .pipe($.plumber())
-    .pipe($.concat('app.js'))
-    .pipe($.babel())
+    .pipe($.browserify(
+      transform: [
+        [babelify, {presets:  ["es2015", "react"]}]
+      ]
+      extensions: '.jsx'
+    ))
+    .pipe($.debug())
+    .pipe($.rename('app.js'))
     .pipe(gulp.dest('./app'))
     .pipe($.livereload())
 
@@ -26,7 +33,7 @@ gulp.task 'watch', ->
   $.livereload.listen(
     quiet: on
   )
-  $.watch('./src/**/*.js', $.batch (cb) ->
+  $.watch('./src/**/*.jsx', $.batch (cb) ->
     gulp.start('scripts')
     cb()
   )
