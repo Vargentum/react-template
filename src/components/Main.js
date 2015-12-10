@@ -1,16 +1,25 @@
 require('normalize.css');
 require('styles/App.css');
+const FilterableProductTableComponent = require('components/FilterableProductTableComponent.js')
 
 import React from 'react';
 
-let yeomanImage = require('../images/yeoman.png');
+const productTableData = [
+  {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
+  {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
+  {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
+  {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
+  {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
+  {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
+];
+
 
 class AppComponent extends React.Component {
   render() {
     return (
-      <div className="index">
-        <img src={yeomanImage} alt="Yeoman Generator" />
-        <div className="notice">Please edit <code>src/components/Main.js</code> to get started!</div>
+      <div>
+        <h1>Hello Table</h1>
+        <FilterableProductTableComponent data={productTableData} />
       </div>
     );
   }
