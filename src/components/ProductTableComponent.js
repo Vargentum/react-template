@@ -43,7 +43,7 @@ class ProductTableComponent extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {_.chain(this.props.data)
+          {_.chain(this.props.products)
               .filter(item => new RegExp(this.props.filterText, 'i').test(item.name))
               .groupBy(item => item.category)
               .map((items, name) => {
