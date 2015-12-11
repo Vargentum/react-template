@@ -1,10 +1,10 @@
 'use strict';
 
 import React from 'react';
+import SearchBarComponent from "components/SearchBarComponent";
+import ProductTableComponent from "components/ProductTableComponent";
 
 require('styles//FilterableProductTable.styl');
-const SearchBarComponent = require('components/SearchBarComponent')
-const ProductTableComponent = require('components/ProductTableComponent')
 
 
 class FilterableProductTableComponent extends React.Component {
