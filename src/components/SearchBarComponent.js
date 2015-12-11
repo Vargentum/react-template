@@ -6,7 +6,9 @@ require('styles//SearchBar.styl');
 
 class SearchBarComponent extends React.Component {
 
-
+  constructor(props) {
+    super(props)
+  }
 
   render() {
     return (

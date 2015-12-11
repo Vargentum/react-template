@@ -10,6 +10,12 @@ require('styles//ProductTable.styl');
 
 class ProductTableComponent extends React.Component {
 
+  constructor(props) {
+    super(props)
+
+    
+  }
+
   r_categoryItems(items) {
     return _.map(items, i => {
       let mod  = i.stocked ? 'is-stocked' : '';

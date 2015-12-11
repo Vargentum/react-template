@@ -16,19 +16,20 @@ class FilterableProductTableComponent extends React.Component {
       inStockOnly: false,
       filterText: ''
     }
+
+    this.filterProducts = (evt) => {
+      this.setState({
+        filterText: evt.currentTarget.value
+      });    
+    }
+
+    this.toggleStockVisibity = () => {
+      this.setState({
+        inStockOnly: !this.state.inStockOnly
+      });
+    }    
   }
 
-  filterProducts(evt) {
-    this.setState({
-      filterText: evt.currentTarget.value
-    });    
-  }
-
-  toggleStockVisibity() {
-    this.setState({
-      inStockOnly: !this.state.inStockOnly
-    });
-  }
 
 
   render() {
@@ -47,8 +48,8 @@ class FilterableProductTableComponent extends React.Component {
         <SearchBarComponent
           filterText={this.state.filterText}
           inStockOnly={this.state.inStockOnly}
-          handleSearch={this.filterProducts.bind(this)}
-          handleCheck={this.toggleStockVisibity.bind(this)}/>
+          handleSearch={this.filterProducts}
+          handleCheck={this.toggleStockVisibity}/>
 
         <ProductTableComponent
           filterText={this.state.filterText}
