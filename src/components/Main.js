@@ -1,6 +1,6 @@
 require('normalize.css');
 require('styles/App.css');
-import FilterableProductTableComponent from "components/FilterableProductTableComponent.js";
+import FilterableProductTableComponent from 'components/FilterableProductTableComponent.js';
 import React from 'react';
 
 class AppComponent extends React.Component {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import _ from 'lodash'
-import cls from "classnames";
+// import cls from "classnames";
 
 require('styles//ProductTable.styl');
 
@@ -12,7 +12,7 @@ class ProductTableComponent extends React.Component {
 
   r_categoryItems(items) {
     return _.map(items, i => {
-      let mod  = i.stocked ? "is-stocked" : "";
+      let mod  = i.stocked ? 'is-stocked' : '';
       let shouldExpensiveHide = this.props.inStockOnly && !i.stocked
       return (
         shouldExpensiveHide ? null
