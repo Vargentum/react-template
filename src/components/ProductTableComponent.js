@@ -12,8 +12,6 @@ class ProductTableComponent extends React.Component {
 
   constructor(props) {
     super(props)
-
-    
   }
 
   r_categoryItems(items) {
