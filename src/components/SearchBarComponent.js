@@ -8,7 +8,7 @@ class SearchBarComponent extends React.Component {
   render() {
     return (
       <div className="searchbar-component">
-        Please edit src/components///SearchBarComponent.js to update this component!
+        
       </div>
     );
   }
