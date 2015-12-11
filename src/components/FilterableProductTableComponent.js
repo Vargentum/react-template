@@ -8,11 +8,28 @@ require('styles//FilterableProductTable.styl');
 
 
 class FilterableProductTableComponent extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      inStockOnly: true,
+      filterText: 'foot'
+    }
+  }
+
+
   render() {
     return (
       <div className="filterableproducttable-component">
-        <SearchBarComponent {...this.props} />
-        <ProductTableComponent {...this.props} />
+        <SearchBarComponent 
+          filterText={this.state.filterText}
+          inStockOnly={this.state.inStockOnly} />
+        
+        <ProductTableComponent
+          filterText={this.state.filterText}
+          inStockOnly={this.state.inStockOnly}
+          data={this.props.data}/>
       </div>
     );
   }

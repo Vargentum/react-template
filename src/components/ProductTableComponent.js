@@ -13,11 +13,14 @@ class ProductTableComponent extends React.Component {
   r_categoryItems(items) {
     return _.map(items, i => {
       let mod  = i.stocked ? "is-stocked" : "";
+      let shouldExpensiveHide = this.props.inStockOnly && !i.stocked
       return (
-        <tr className={mod} key={i.name}>
-          <td>{i.name}</td>
-          <td>{i.price}</td>
-        </tr>
+        shouldExpensiveHide ? null
+          :
+          <tr className={mod} key={_.uniqueId(`${i.name}_`)}>
+            <td>{i.name}</td>
+            <td>{i.price}</td>
+          </tr>
       )
     })
   }
@@ -25,8 +28,7 @@ class ProductTableComponent extends React.Component {
   r_categoryName(name) {
     return (
       <tr key={name}>
-        <td className="category"
-            colSpan="2">{name}</td>
+        <td className="category" colSpan="2">{name}</td>
       </tr>
     )
   }
@@ -42,6 +44,7 @@ class ProductTableComponent extends React.Component {
         </thead>
         <tbody>
           {_.chain(this.props.data)
+              .filter(item => new RegExp(this.props.filterText, 'i').test(item.name))
               .groupBy(item => item.category)
               .map((items, name) => {
                 return (
