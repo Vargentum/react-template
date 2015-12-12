@@ -1,7 +1,8 @@
 'use strict';
 
 import React from 'react';
-import _ from "lodash";
+import _ from 'lodash';
+import update from 'react-addons-update'
 
 require('styles//CreateProductForm.styl');
 
