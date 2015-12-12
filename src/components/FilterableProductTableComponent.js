@@ -64,7 +64,7 @@ class FilterableProductTableComponent extends React.Component {
           inStockOnly={this.state.inStockOnly}
           products={this.state.products}/>
 
-        <CreateForm onCreate={this.addProduct} />
+        <CreateForm handleSave={this.addProduct} />
       </div>
     );
   }
