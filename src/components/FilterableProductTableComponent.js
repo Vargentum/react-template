@@ -46,7 +46,7 @@ class FilterableProductTableComponent extends React.Component {
 
     this.addProduct = (p) => {
       this.setState({
-        [products.items]: update(this.state.products, {$push: [p]})
+        products: update(this.state.products, {items: {$push: [p]}})
       });
     }
 
