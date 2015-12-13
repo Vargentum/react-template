@@ -29,8 +29,15 @@ class SearchBarComponent extends React.Component {
 
 SearchBarComponent.displayName = 'SearchBarComponent';
 
-// Uncomment properties you need
-// SearchBarComponent.propTypes = {};
-// SearchBarComponent.defaultProps = {};
+SearchBarComponent.propTypes = {
+  filterText: React.PropTypes.string,
+  inStockOnly: React.PropTypes.bool,
+  handleSearch: React.PropTypes.func,
+  handleCheck: React.PropTypes.func
+};
+SearchBarComponent.defaultProps = {
+  filterText: '',
+  inStockOnly: false,
+};
 
 export default SearchBarComponent;

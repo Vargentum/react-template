@@ -82,8 +82,14 @@ class ProductTableComponent extends React.Component {
 
 ProductTableComponent.displayName = 'ProductTableComponent';
 
-// Uncomment properties you need
-// ProductTableComponent.propTypes = {};
-// ProductTableComponent.defaultProps = {};
+ProductTableComponent.propTypes = {
+  filterText: React.PropTypes.string,
+  inStockOnly: React.PropTypes.bool,
+  products: React.PropTypes.object
+};
+ProductTableComponent.defaultProps = {
+  filterText: "",
+  inStockOnly: false
+};
 
 export default ProductTableComponent;

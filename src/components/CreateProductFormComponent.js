@@ -104,7 +104,9 @@ class CreateProductFormComponent extends React.Component {
 CreateProductFormComponent.displayName = 'CreateProductFormComponent';
 
 // Uncomment properties you need
-// CreateProductFormComponent.propTypes = {};
+CreateProductFormComponent.propTypes = {
+  handleSave: React.PropTypes.func
+};
 // CreateProductFormComponent.defaultProps = {};
 
 export default CreateProductFormComponent;
