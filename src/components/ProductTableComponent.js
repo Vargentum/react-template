@@ -23,7 +23,7 @@ class ProductTableComponent extends React.Component {
           :
           <tr className={mod} key={_.uniqueId(`${i.name}_`)}>
             <td>{i.name}</td>
-            <td>{i.price}</td>
+            <td>{`$${i.price}`}</td>
           </tr>
       )
     })
@@ -38,16 +38,30 @@ class ProductTableComponent extends React.Component {
   }
 
   render() {
+    const products = this.props.products
+
+    let addArrowTo = (t) => {
+      if (t !== products.orderBy) return ''
+      return `is-${products.orderType}`
+    }
+
     return (
       <table className="producttable-component">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Price</th>
+            {['name', 'price'].map((name) => {
+              return (
+                <th 
+                  className={addArrowTo(name)}
+                  onClick={_.partial(this.props.handleSort, name)}>
+                    {_.capitalize(name)}
+                </th>  
+              )
+            })}
           </tr>
         </thead>
         <tbody>
-          {_.chain(this.props.products)
+          {_.chain(products.items)
               .filter(item => new RegExp(this.props.filterText, 'i').test(item.name))
               .groupBy(item => item.category)
               .map((items, name) => {

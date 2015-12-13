@@ -1,6 +1,8 @@
 'use strict';
 
 import React from 'react';
+import update from 'react-addons-update';
+
 import SearchBar from 'components/SearchBarComponent';
 import ProductTable from 'components/ProductTableComponent';
 import CreateForm from 'components/CreateProductFormComponent';
@@ -16,14 +18,18 @@ class FilterableProductTableComponent extends React.Component {
     this.state = {
       inStockOnly: false,
       filterText: '',
-      products: [
-        {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
-        {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
-        {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
-        {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
-        {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
-        {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
-      ]
+      products: {
+        items: [
+          {category: 'Sporting Goods', price: 49.99, stocked: true, name: 'Football'},
+          {category: 'Sporting Goods', price: 9.99, stocked: true, name: 'Baseball'},
+          {category: 'Sporting Goods', price: 29.99, stocked: false, name: 'Basketball'},
+          {category: 'Electronics', price: 99.99, stocked: true, name: 'iPod Touch'},
+          {category: 'Electronics', price: 399.99, stocked: false, name: 'iPhone 5'},
+          {category: 'Electronics', price: 199.99, stocked: true, name: 'Nexus 7'}
+        ],
+        orderType: '',
+        orderBy: ''
+      }
     }
 
     this.filterProducts = (evt) => {
@@ -39,14 +45,29 @@ class FilterableProductTableComponent extends React.Component {
     }
 
     this.addProduct = (p) => {
-      let products = Array.prototype.slice.apply(this.state.products)
-      products.push(p)
-
       this.setState({
-        products: products
+        [products.items]: update(this.state.products, {$push: [p]})
       });
     }
+
+    let sortProductsDecorator = () => {
+      let order = 'asc';
+      return (type) => {
+        order === 'asc' ? order = 'desc' : order = 'asc';
+        this.setState({
+          products: {
+            items: _.sortByOrder(this.state.products.items, type, order),
+            orderType: order,
+            orderBy: type
+          }
+        });        
+      }
+    }
+
+    this.sortProducts = sortProductsDecorator();
   }
+
+  
   
 
   render() {
@@ -57,12 +78,13 @@ class FilterableProductTableComponent extends React.Component {
           filterText={this.state.filterText}
           inStockOnly={this.state.inStockOnly}
           handleSearch={this.filterProducts}
-          handleCheck={this.toggleStockVisibity}/>
+          handleCheck={this.toggleStockVisibity} />
 
         <ProductTable
           filterText={this.state.filterText}
           inStockOnly={this.state.inStockOnly}
-          products={this.state.products}/>
+          products={this.state.products}
+          handleSort={this.sortProducts} />
 
         <CreateForm handleSave={this.addProduct} />
       </div>
