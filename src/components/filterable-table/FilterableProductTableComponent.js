@@ -3,9 +3,9 @@
 import React from 'react';
 import update from 'react-addons-update';
 
-import SearchBar from 'components/SearchBarComponent';
-import ProductTable from 'components/ProductTableComponent';
-import CreateForm from 'components/CreateProductFormComponent';
+import SearchBar from 'components/filterable-table/SearchBarComponent';
+import ProductTable from 'components/filterable-table/ProductTableComponent';
+import CreateForm from 'components/filterable-table/CreateProductFormComponent';
 
 require('styles//FilterableProductTable.styl');
 
