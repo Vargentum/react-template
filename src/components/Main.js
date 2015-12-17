@@ -1,7 +1,9 @@
 require('normalize.css');
 require('styles/App.css');
-import FilterableProductTableComponent from 'components/filterable-table/FilterableProductTableComponent.js';
+
 import React from 'react';
+// import FilterableProductTableComponent from 'components/filterable-table/FilterableProductTableComponent.js';
+import Quotes from 'components/quotes/FamousQuotesComponent'
 
 class AppComponent extends React.Component {
   render() {
@@ -9,8 +11,8 @@ class AppComponent extends React.Component {
       <div>
         <h1>Famous quotes</h1>
         {/*<FilterableProductTableComponent/>*/}
+        <Quotes  />
 
-        
       </div>
     );
   }

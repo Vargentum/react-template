@@ -35,7 +35,7 @@ class FilterableProductTableComponent extends React.Component {
     this.filterProducts = (evt) => {
       this.setState({
         filterText: evt.currentTarget.value
-      });    
+      });
     }
 
     this.toggleStockVisibity = () => {
@@ -60,15 +60,15 @@ class FilterableProductTableComponent extends React.Component {
             orderType: order,
             orderBy: type
           }
-        });        
+        });
       }
     }
 
     this.sortProducts = sortProductsDecorator();
   }
 
-  
-  
+
+
 
   render() {
 
