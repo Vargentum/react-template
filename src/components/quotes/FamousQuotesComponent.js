@@ -6,6 +6,8 @@ import update from 'react-addons-update'
 import _ from 'lodash'
 import Q from 'q'
 
+import FilterableTable from 'components/ui/FilterableTableComponent'
+
 require('styles/quotes/FamousQuotes.styl');
 
 
@@ -20,15 +22,7 @@ class FamousQuotesComponent extends React.Component {
   render() {
     return (
       <div className="famousquotes-component">
-        hello quotes
-        <ul>
-          {this.props.quotes.map(
-            q => <li key={_.uniqueId('quote-')}>
-                    <p>{q.quote}</p>
-                    <p>{q.author} - {q.category}</p>
-                 </li>
-          )}
-        </ul>        
+        <FilterableTable mod="quotes, test, rest" data={this.props.quotes} />
       </div>
     );
   }

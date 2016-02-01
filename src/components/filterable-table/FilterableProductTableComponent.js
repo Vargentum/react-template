@@ -5,7 +5,6 @@ import update from 'react-addons-update';
 
 import SearchBar from 'components/filterable-table/SearchBarComponent';
 import ProductTable from 'components/filterable-table/ProductTableComponent';
-import CreateForm from 'components/filterable-table/CreateProductFormComponent';
 
 require('styles//FilterableProductTable.styl');
 
@@ -86,7 +85,6 @@ class FilterableProductTableComponent extends React.Component {
           products={this.state.products}
           handleSort={this.sortProducts} />
 
-        <CreateForm handleSave={this.addProduct} />
       </div>
     );
   }
