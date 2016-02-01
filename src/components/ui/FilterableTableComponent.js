@@ -2,14 +2,29 @@
 
 import React from 'react';
 import classnames from 'classnames'
+import _ from 'lodash'
 
 require('styles/ui/FilterableTable.styl');
+
 
 class FilterableTableComponent extends React.Component {
 
   r_head() {
+    let checkOrder = (type, key) => this.props.order === type && this.props.orderBy === key
     let tpl = _.first(this.props.data)
-    let cells = _.map(tpl, (val, key) => <th key={key}>{key}</th>)
+    let cells = _.map(tpl, (val, key) => {
+      let cls = {
+        'is-asc': checkOrder('asc', key),
+        'is-desc': checkOrder('desc', key),
+        'is-clickable': !!this.props.handleSort
+      }
+
+      return (
+        <th key={key}
+            className={classnames(cls)}
+            onClick={_.partial(this.props.handleSort, key)}>{key}</th>
+      )
+    })
     return (
       <thead>
         <tr>
@@ -35,7 +50,6 @@ class FilterableTableComponent extends React.Component {
 
 
   render() {
-
     let cls = this.props.mod.split(',').reduce((prev, next) => {
       prev[`ui-filterable-table--${next.trim()}`] = true
       return prev
@@ -52,8 +66,7 @@ class FilterableTableComponent extends React.Component {
 
 FilterableTableComponent.displayName = 'UiFilterableTableComponent';
 
-// Uncomment properties you need
-// FilterableTableComponent.propTypes = {};
+
 FilterableTableComponent.defaultProps = {
   data: [],
   mod: ''

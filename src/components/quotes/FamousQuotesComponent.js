@@ -11,6 +11,7 @@ import FilterableTable from 'components/ui/FilterableTableComponent'
 require('styles/quotes/FamousQuotes.styl');
 
 
+
 class FamousQuotesComponent extends React.Component {
   constructor(props) {
     super(props)
@@ -22,7 +23,9 @@ class FamousQuotesComponent extends React.Component {
   render() {
     return (
       <div className="famousquotes-component">
-        <FilterableTable mod="quotes, test, rest" data={this.props.quotes} />
+        <FilterableTable mod="quotes"                        
+                         data={this.props.quotes}
+                         {...this.props} />
       </div>
     );
   }
@@ -38,7 +41,8 @@ class FamousQuotesComponentContainer extends React.Component {
         quotes: []
       }
 
-      this.getQuote = (resolve, reject) => {
+
+      let getQuote = (resolve, reject) => {
         qwest.get("https://andruxnet-random-famous-quotes.p.mashape.com", null, {
           headers: {
             "X-Mashape-Key": "6ZxCnFvSUkmshFVDJrAg9TszqTEJp1OvHeIjsnwqQ4akuwfrB5",
@@ -53,11 +57,10 @@ class FamousQuotesComponentContainer extends React.Component {
       }
 
 
-      this.getQuotes = n => {
-
+      this.getQuotes = (n) => {
         let quotes = _.times(n, () => {
           return Q.promise((resolve, reject) => {
-            this.getQuote(
+            getQuote(
               (response) => {
                 resolve(response)
               },
@@ -76,11 +79,22 @@ class FamousQuotesComponentContainer extends React.Component {
           },
           (error) => {
             console.log("No quotes!!!!")
-          })
+          }
+        )
+      }
+
+
+      this.handleSort = (type) => {
+        let order = this.state.order === 'asc' ? 'desc' : 'asc'
+
+        this.setState({
+          quotes: _.sortByOrder(this.state.quotes, type ,order),
+          order: order,
+          orderBy: type
+        });
+
       }
     }
-
-
 
 
     componentDidMount() {
@@ -89,9 +103,10 @@ class FamousQuotesComponentContainer extends React.Component {
 
 
     render() {
-      // this.state.quotes
       return <div>
-               <FamousQuotesComponent {...this.state} />
+               <FamousQuotesComponent
+                  handleSort={this.handleSort}
+                  {...this.state} />
              </div>
     }
 }
