@@ -10,46 +10,46 @@ import FilterableTable from 'components/ui/FilterableTableComponent'
 
 require('styles/quotes/FamousQuotes.styl');
 
-
-
-class FamousQuotesComponent extends React.Component {
-  constructor(props) {
-    super(props)
-    this.displayName = 'QuotesFamousQuotesComponent';
-
+const CONFIG = {
+  url: "https://andruxnet-random-famous-quotes.p.mashape.com",
+  headers: {
+    "X-Mashape-Key": "6ZxCnFvSUkmshFVDJrAg9TszqTEJp1OvHeIjsnwqQ4akuwfrB5",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept": "application/json"
   }
+}
 
-
-  render() {
-    return (
-      <div className="famousquotes-component">
-        <FilterableTable mod="quotes"                        
-                         data={this.props.quotes}
-                         {...this.props} />
-      </div>
-    );
+const categoryRequestDispatcher = function(params) {
+  let {url, headers} = CONFIG
+  let doUrl = ({k, v}) => {
+    if (_.isEmpty(v)) return url;
+    return v.forEach(ct => url += `/?${k}=${v}`)
+  }
+  return {
+    url: doUrl(_.isObject(params)),
+    headers: headers
   }
 }
 
 
-class FamousQuotesComponentContainer extends React.Component {
+class FamousQuotesComponent extends React.Component {
     constructor(props) {
       super(props);
-      this.displayName = 'FamousQuotesComponentContainer';
+      this.displayName = 'FamousQuotesComponent';
 
       this.state = {
-        quotes: []
+        quotes: [],
+        cat: ['famous', 'movies']
       }
+
+      let dispatcher = categoryRequestDispatcher({
+        cat: ['famous', 'movies']
+      })
 
 
       let getQuote = (resolve, reject) => {
-        qwest.get("https://andruxnet-random-famous-quotes.p.mashape.com", null, {
-          headers: {
-            "X-Mashape-Key": "6ZxCnFvSUkmshFVDJrAg9TszqTEJp1OvHeIjsnwqQ4akuwfrB5",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Accept": "application/json"
-          }
-        }).then((xhr, response) => {
+        qwest.get(dispatcher.url, null, dispatcher.headers)
+        .then((xhr, response) => {
           resolve(JSON.parse(response))
         }).then((xhr, error) => {
           reject(error)
@@ -103,12 +103,13 @@ class FamousQuotesComponentContainer extends React.Component {
 
 
     render() {
-      return <div>
-               <FamousQuotesComponent
-                  handleSort={this.handleSort}
-                  {...this.state} />
+      return <div className="famousquotes-component">
+               <FilterableTable mod="quotes"                        
+                           data={this.state.quotes}
+                           handleSort={this.handleSort}
+                           {...this.props} />
              </div>
     }
 }
 
-export default FamousQuotesComponentContainer;
+export default FamousQuotesComponent;
