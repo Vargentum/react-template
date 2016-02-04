@@ -3,9 +3,8 @@
 import React from 'react';
 import update from 'react-addons-update';
 
-import SearchBar from 'components/SearchBarComponent';
-import ProductTable from 'components/ProductTableComponent';
-import CreateForm from 'components/CreateProductFormComponent';
+import SearchBar from 'components/filterable-table/SearchBarComponent';
+import ProductTable from 'components/filterable-table/ProductTableComponent';
 
 require('styles//FilterableProductTable.styl');
 
@@ -35,7 +34,7 @@ class FilterableProductTableComponent extends React.Component {
     this.filterProducts = (evt) => {
       this.setState({
         filterText: evt.currentTarget.value
-      });    
+      });
     }
 
     this.toggleStockVisibity = () => {
@@ -60,15 +59,15 @@ class FilterableProductTableComponent extends React.Component {
             orderType: order,
             orderBy: type
           }
-        });        
+        });
       }
     }
 
     this.sortProducts = sortProductsDecorator();
   }
 
-  
-  
+
+
 
   render() {
 
@@ -86,7 +85,6 @@ class FilterableProductTableComponent extends React.Component {
           products={this.state.products}
           handleSort={this.sortProducts} />
 
-        <CreateForm handleSave={this.addProduct} />
       </div>
     );
   }
