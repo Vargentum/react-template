@@ -7,6 +7,7 @@ import _ from 'lodash'
 import Q from 'q'
 
 import FilterableTable from 'components/ui/FilterableTableComponent'
+import Creator from 'components/quotes/CreatorComponent'
 
 require('styles/quotes/FamousQuotes.styl');
 
@@ -16,7 +17,8 @@ const CONFIG = {
     "X-Mashape-Key": "6ZxCnFvSUkmshFVDJrAg9TszqTEJp1OvHeIjsnwqQ4akuwfrB5",
     "Content-Type": "application/x-www-form-urlencoded",
     "Accept": "application/json"
-  }
+  },
+  categories: ['famous', 'movies']
 }
 
 
@@ -40,7 +42,7 @@ class FamousQuotesComponent extends React.Component {
 
       this.state = {
         quotes: [],
-        cat: ['famous', 'movies']
+        categories: CONFIG.categories
       }
 
       let dispatcher = categoryRequestDispatcher({
@@ -77,7 +79,7 @@ class FamousQuotesComponent extends React.Component {
         Q.all(quotes).then(
           (response) => {
             this.setState({
-              quotes: response
+              quotes: update(this.state.array, {$push: response})
             });
           },
           (error) => {
@@ -111,6 +113,9 @@ class FamousQuotesComponent extends React.Component {
                            data={this.state.quotes}
                            handleSort={this.handleSort}
                            {...this.props} />
+               <Creator handleAdd={function() {}}
+                        handleCategoryUpdate={function() {}} 
+                        {...this.state}/>
              </div>
     }
 }
