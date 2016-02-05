@@ -19,14 +19,15 @@ const CONFIG = {
   }
 }
 
+
 const categoryRequestDispatcher = function(params) {
   let {url, headers} = CONFIG
-  let doUrl = ({k, v}) => {
+  let dispatchUrl = ({k, v}) => {
     if (_.isEmpty(v)) return url;
     return v.forEach(ct => url += `/?${k}=${v}`)
   }
   return {
-    url: doUrl(_.isObject(params)),
+    url: dispatchUrl(params),
     headers: headers
   }
 }
@@ -43,12 +44,14 @@ class FamousQuotesComponent extends React.Component {
       }
 
       let dispatcher = categoryRequestDispatcher({
-        cat: ['famous', 'movies']
+        cat: this.state.cat
       })
 
 
       let getQuote = (resolve, reject) => {
-        qwest.get(dispatcher.url, null, dispatcher.headers)
+        qwest.get(dispatcher.url, null, {
+          headers: dispatcher.headers
+        })
         .then((xhr, response) => {
           resolve(JSON.parse(response))
         }).then((xhr, error) => {
