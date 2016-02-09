@@ -18,21 +18,35 @@ const CONFIG = {
     "Content-Type": "application/x-www-form-urlencoded",
     "Accept": "application/json"
   },
-  categories: ['famous', 'movies']
+  categories: {
+    famous: {selected: true},
+    movies: {selected: true}
+  },
+  quantities: {
+    10: {selected: true},
+    15: {selected: false},
+    25: {selected: false}
+  }
 }
 
 
 const categoryRequestDispatcher = function(params) {
   let {url, headers} = CONFIG
-  let dispatchUrl = ({k, v}) => {
-    if (_.isEmpty(v)) return url;
-    return v.forEach(ct => url += `/?${k}=${v}`)
+  let dispatch = (prev, next, name) => {
+    _(next)
+      .filter(({selected}) => selected)
+      .forEach((i, val) => {
+        prev+= `/?${name}=${val}`
+      })
+    return prev
   }
   return {
-    url: dispatchUrl(params),
+    url: _.reduce(params, dispatch, url),
     headers: headers
   }
 }
+
+
 
 
 class FamousQuotesComponent extends React.Component {
@@ -42,15 +56,19 @@ class FamousQuotesComponent extends React.Component {
 
       this.state = {
         quotes: [],
-        categories: CONFIG.categories
+        categories: CONFIG.categories,
+        quantities: CONFIG.quantities,
       }
 
       let dispatcher = categoryRequestDispatcher({
-        cat: this.state.cat
+        cat: this.state.categories,
+        foo: [1,2,3],
+        bar: [1,2,3]
       })
 
 
       let getQuote = (resolve, reject) => {
+        console.log(dispatcher.url)
         qwest.get(dispatcher.url, null, {
           headers: dispatcher.headers
         })
@@ -99,6 +117,14 @@ class FamousQuotesComponent extends React.Component {
         });
 
       }
+
+
+      this.controlSelection = (col, title) => {
+        let selected = this.state[col][title].selected
+        this.setState({
+          [col]: update(this.state[col], {[title]: {$set: !selected}}) 
+        });
+      }
     }
 
 
@@ -108,13 +134,16 @@ class FamousQuotesComponent extends React.Component {
 
 
     render() {
+      let quantity = _.findKey(this.state.quantities, ({selected}) => selected)
+
       return <div className="famousquotes-component">
                <FilterableTable mod="quotes"                        
                            data={this.state.quotes}
                            handleSort={this.handleSort}
                            {...this.props} />
-               <Creator handleAdd={function() {}}
-                        handleCategoryUpdate={function() {}} 
+               <Creator onQuantityUpdate={_.partial(this.controlSelection, "quantities")}
+                        onCategoryUpdate={_.partial(this.controlSelection, "categories")}
+                        action={_.partial(this.getQuotes, quantity)}
                         {...this.state}/>
              </div>
     }

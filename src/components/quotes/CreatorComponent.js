@@ -6,41 +6,57 @@ require('styles/quotes/Creator.styl');
 
 class CreatorComponent extends React.Component {
 
-  r_field (title, handleChange, type, name) {
+  r_field (title, selected, {handler, type, name}) {
     return (
-      <label>
+      <label className="creator-component__field" key={title}>
+        <input type={type}
+               name={name}
+               onChange={_.partial(handler, title)} 
+               checked={selected} />
         <span>{title}</span>
-        <input type={type} name={name} onChange={handleChange} />
       </label>
       )
   }
 
+  r_fieldSet (title, fields) {
+    return (
+      <fieldset key={title} className="creator-component__fset">
+        <h3 className="creator-component__fset_title">{title}</h3>
+        {fields}
+      </fieldset>
+    )
+  }
+
   render() {
     let inputsTpl = {
-      quantity: {
-        handleChange: () => {},
+      quantities: {
+        handler: this.props.onQuantityUpdate,
         name: 'quantity',
         type: 'radio',
-        titles: ['10', '20', '40']
+        items: this.props.quantities
       },
-      category: {
-        handleChange: () => {},
+      categories: {
+        handler: this.props.onCategoryUpdate,
         name: 'category',
         type: 'checkbox',
-        titles: this.props.categories
+        items: this.props.categories
       }
     }
 
+    let form = _(inputsTpl)
+                .mapValues(tpl => {
+                  return _.map(
+                    tpl.items, 
+                    ({selected}, title) => this.r_field(title, selected, tpl)
+                  )
+                })
+                .map((v, k) => this.r_fieldSet(k, v))
+                .value()
 
     return (
       <div className="creator-component">
-
-        {_.mapValues(inputsTpl, tpl => {
-          return tpl.titles.map(title => {
-            this.r_field(title, {tpl})
-          })
-        })}
-
+        {form}
+        <button onClick={this.props.action}>Reload Quotes</button>
       </div>
     );
   }
