@@ -79,7 +79,7 @@ class FamousQuotesComponent extends React.Component {
         Q.all(quotes).then(
           (response) => {
             this.setState({
-              quotes: update(this.state.array, {$push: response})
+              quotes: update(this.state.quotes, {$push: response})
             });
           },
           (error) => {
