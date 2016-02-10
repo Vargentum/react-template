@@ -30,20 +30,15 @@ const CONFIG = {
 }
 
 
-const categoryRequestDispatcher = function(params) {
-  let {url, headers} = CONFIG
-  let dispatch = (prev, next, name) => {
-    _(next)
-      .filter(({checked}) => checked)
-      .forEach((i, val) => {
-        prev+= `/?${name}=${val}`
+const urlDispatcher = function(params) {
+  let dispatch = (acc, param, name) => {
+      _.forIn(param, (v, k) => {
+        if (!v.checked) return
+        acc += `/?${name}=${k}`
       })
-    return prev
-  }
-  return {
-    url: _.reduce(params, dispatch, url),
-    headers: headers
-  }
+      return acc
+    }
+  return _.reduce(params, dispatch, CONFIG.url)
 }
 
 
@@ -60,17 +55,9 @@ class FamousQuotesComponent extends React.Component {
         quantities: CONFIG.quantities,
       }
 
-      let dispatcher = categoryRequestDispatcher({
-        cat: this.state.categories,
-        foo: [1,2,3],
-        bar: [1,2,3]
-      })
-
-
-      let getQuote = (resolve, reject) => {
-        console.log(dispatcher.url)
-        qwest.get(dispatcher.url, null, {
-          headers: dispatcher.headers
+      let getQuote = (url, resolve, reject) => {
+        qwest.get(url, null, {
+          headers: CONFIG.headers
         })
         .then((xhr, response) => {
           resolve(JSON.parse(response))
@@ -81,9 +68,14 @@ class FamousQuotesComponent extends React.Component {
 
 
       this.getQuotes = (n) => {
+        let url = urlDispatcher({
+          cat: this.state.categories
+        })
+
         let quotes = _.times(n, () => {
           return Q.promise((resolve, reject) => {
             getQuote(
+              url,
               (response) => {
                 resolve(response)
               },
@@ -138,8 +130,6 @@ class FamousQuotesComponent extends React.Component {
         this.setState({
           [col]: update(this.state[col], {[entry]: {checked: {$set: !checkedS}}})
         });
-
-
       }
     }
 
