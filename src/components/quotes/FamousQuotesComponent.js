@@ -143,6 +143,10 @@ class FamousQuotesComponent extends React.Component {
       let quantity = _.findKey(this.state.quantities, ({checked}) => checked)
 
       return <div className="famousquotes-component">
+               <Creator onQuantityUpdate={_.partial(this.handleRadioSelection, "quantities")}
+                        onCategoryUpdate={_.partial(this.handleCheckboxSelection, "categories")}
+                        action={_.partial(this.getQuotes, quantity)}
+                        {...this.state}/>
                <FilterableTable mod="quotes"                        
                            data={this.state.quotes}
                            handleSort={this.handleSort}

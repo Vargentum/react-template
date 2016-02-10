@@ -33,12 +33,12 @@ class CreatorComponent extends React.Component {
         handler: this.props.onQuantityUpdate,
         type: 'radio',
         items: this.props.quantities,
-      },
-      categories: {
-        handler: this.props.onCategoryUpdate,
-        type: 'checkbox',
-        items: this.props.categories
       }
+      // categories: {
+      //   handler: this.props.onCategoryUpdate,
+      //   type: 'checkbox',
+      //   items: this.props.categories
+      // }
     }
 
     let form = _(inputsTpl)
@@ -54,7 +54,9 @@ class CreatorComponent extends React.Component {
     return (
       <div className="creator-component">
         {form}
-        <button onClick={this.props.action}>Reload Quotes</button>
+        <button
+          className="creator-component__btn"
+          onClick={this.props.action}>Reload Quotes</button>
       </div>
     );
   }
