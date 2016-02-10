@@ -19,8 +19,8 @@ const CONFIG = {
     "Accept": "application/json"
   },
   categories: {
-    famous: {checked: true, disabled: false},
-    movies: {checked: true, disabled: false}
+    famous: {checked: true},
+    movies: {checked: true}
   },
   quantities: {
     10: {checked: true},
@@ -115,27 +115,28 @@ class FamousQuotesComponent extends React.Component {
         });
       }
 
-      this.handleRadioSelection = (col, title) => {
+
+      this.handleRadioSelection = (col, entry) => {
         this.setState({
           [col]: update(this.state[col], {$apply: (col) => {
             return _.mapValues(col, ({checked}, k) => {
-              return {checked: k === title}
+              return {checked: k === entry}
             })
           }}) 
         });
       }
 
 
-      this.handleCheckboxSelection = (col, title) => {
-        let checked = this.state[col][title].checked
+      this.handleCheckboxSelection = (col, entry) => {
+        let clone = _.clone(this.state[col])
+           ,checkedQ = _.reduce(clone, (acc, {checked}) => checked ? ++acc : acc, 0)
+           ,checkedS = clone[entry].checked
+
+        // prevent disabling last checkbox
+        if (checkedQ <= 1 && checkedS) return
+        
         this.setState({
-          [col]: update(this.state[col], {$apply: (col) => {
-            return _(col)
-              .mapValues((entry, k) => {
-                entry
-              })
-              .mapValues
-          }}) 
+          [col]: update(this.state[col], {[entry]: {checked: {$set: !checkedS}}})
         });
 
 

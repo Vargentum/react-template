@@ -7,14 +7,12 @@ require('styles/quotes/Creator.styl');
 class CreatorComponent extends React.Component {
 
 
-  r_field (title, {checked, disabled}, {handler, type, name}) {
-    debugger
+  r_field (title, {checked}, {handler, type, name}) {
     return (
       <label className="creator-component__field" key={title}>
         <input type={type}
                onChange={_.partial(handler, title)} 
-               checked={checked} 
-               disabled={disabled || false}/>
+               checked={checked} />
         <span>{title}</span>
       </label>
       )
