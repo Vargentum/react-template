@@ -150,11 +150,7 @@ class FamousQuotesComponent extends React.Component {
                <FilterableTable mod="quotes"                        
                            data={this.state.quotes}
                            handleSort={this.handleSort}
-                           {...this.props} />
-               <Creator onQuantityUpdate={_.partial(this.handleRadioSelection, "quantities")}
-                        onCategoryUpdate={_.partial(this.handleCheckboxSelection, "categories")}
-                        action={_.partial(this.getQuotes, quantity)}
-                        {...this.state}/>
+                           {...this.state} />
              </div>
     }
 }
