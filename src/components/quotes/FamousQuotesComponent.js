@@ -19,13 +19,13 @@ const CONFIG = {
     "Accept": "application/json"
   },
   categories: {
-    famous: {selected: true},
-    movies: {selected: true}
+    famous: {checked: true, disabled: false},
+    movies: {checked: true, disabled: false}
   },
   quantities: {
-    10: {selected: true},
-    15: {selected: false},
-    25: {selected: false}
+    10: {checked: true},
+    15: {checked: false},
+    25: {checked: false}
   }
 }
 
@@ -34,7 +34,7 @@ const categoryRequestDispatcher = function(params) {
   let {url, headers} = CONFIG
   let dispatch = (prev, next, name) => {
     _(next)
-      .filter(({selected}) => selected)
+      .filter(({checked}) => checked)
       .forEach((i, val) => {
         prev+= `/?${name}=${val}`
       })
@@ -95,10 +95,8 @@ class FamousQuotesComponent extends React.Component {
         })
 
         Q.all(quotes).then(
-          (response) => {
-            this.setState({
-              quotes: update(this.state.quotes, {$push: response})
-            });
+          (quotes) => {
+            this.setState({quotes});
           },
           (error) => {
             console.log("No quotes!!!!")
@@ -115,15 +113,32 @@ class FamousQuotesComponent extends React.Component {
           order: order,
           orderBy: type
         });
+      }
 
+      this.handleRadioSelection = (col, title) => {
+        this.setState({
+          [col]: update(this.state[col], {$apply: (col) => {
+            return _.mapValues(col, ({checked}, k) => {
+              return {checked: k === title}
+            })
+          }}) 
+        });
       }
 
 
-      this.controlSelection = (col, title) => {
-        let selected = this.state[col][title].selected
+      this.handleCheckboxSelection = (col, title) => {
+        let checked = this.state[col][title].checked
         this.setState({
-          [col]: update(this.state[col], {[title]: {$set: !selected}}) 
+          [col]: update(this.state[col], {$apply: (col) => {
+            return _(col)
+              .mapValues((entry, k) => {
+                entry
+              })
+              .mapValues
+          }}) 
         });
+
+
       }
     }
 
@@ -134,15 +149,15 @@ class FamousQuotesComponent extends React.Component {
 
 
     render() {
-      let quantity = _.findKey(this.state.quantities, ({selected}) => selected)
+      let quantity = _.findKey(this.state.quantities, ({checked}) => checked)
 
       return <div className="famousquotes-component">
                <FilterableTable mod="quotes"                        
                            data={this.state.quotes}
                            handleSort={this.handleSort}
                            {...this.props} />
-               <Creator onQuantityUpdate={_.partial(this.controlSelection, "quantities")}
-                        onCategoryUpdate={_.partial(this.controlSelection, "categories")}
+               <Creator onQuantityUpdate={_.partial(this.handleRadioSelection, "quantities")}
+                        onCategoryUpdate={_.partial(this.handleCheckboxSelection, "categories")}
                         action={_.partial(this.getQuotes, quantity)}
                         {...this.state}/>
              </div>

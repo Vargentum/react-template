@@ -6,13 +6,15 @@ require('styles/quotes/Creator.styl');
 
 class CreatorComponent extends React.Component {
 
-  r_field (title, selected, {handler, type, name}) {
+
+  r_field (title, {checked, disabled}, {handler, type, name}) {
+    debugger
     return (
       <label className="creator-component__field" key={title}>
         <input type={type}
-               name={name}
                onChange={_.partial(handler, title)} 
-               checked={selected} />
+               checked={checked} 
+               disabled={disabled || false}/>
         <span>{title}</span>
       </label>
       )
@@ -31,13 +33,11 @@ class CreatorComponent extends React.Component {
     let inputsTpl = {
       quantities: {
         handler: this.props.onQuantityUpdate,
-        name: 'quantity',
         type: 'radio',
-        items: this.props.quantities
+        items: this.props.quantities,
       },
       categories: {
         handler: this.props.onCategoryUpdate,
-        name: 'category',
         type: 'checkbox',
         items: this.props.categories
       }
@@ -47,7 +47,7 @@ class CreatorComponent extends React.Component {
                 .mapValues(tpl => {
                   return _.map(
                     tpl.items, 
-                    ({selected}, title) => this.r_field(title, selected, tpl)
+                    (entry, title) => this.r_field(title, entry, tpl)
                   )
                 })
                 .map((v, k) => this.r_fieldSet(k, v))
