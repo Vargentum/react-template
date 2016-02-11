@@ -147,27 +147,28 @@ class FamousQuotesComponent extends React.Component {
       }
 
 
-      this.addToFavorites = (idx) => {
+      this.translateQuote = (src, dest, idx) => {
         this.setState({
-          favorites: update(this.state.favorites, {$push: [this.state.quotes[idx]]}) 
+          [dest]: update(this.state[dest], {$push: [this.state[src][idx]]}),
+          [src]: update(this.state[src], {$splice: [[idx, 1]]})
         });
       }
-
-
-      this.removeFromFavorites = (idx) => {
-        this.setState({
-          favorites: update(this.state.favorites, {$splice: [[idx, 1]]})
-        });
-      }
-
     }
 
     r_quotes(mod) {
-      return <FilterableTable mod={`quotes, hoverable-rows, ${mod}`}
+      return <FilterableTable mod={`quotes, hoverable-rows, quotes-${mod}`}
                 data={this.state.quotes}
                 onThClick={_.partial(this.sort, 'quotes')}
-                onTrClick={this.addToFavorites}
+                onTrClick={_.partial(this.translateQuote, 'quotes', 'favorites')}
                 {...this.state} />
+    }
+
+    r_favorites(mod) {
+      return <FilterableTable mod={`favorites, hoverable-rows, favorites-${mod}`}
+                 data={this.state.favorites}
+                 onThClick={_.partial(this.sort, 'favorites')}
+                 onTrClick={_.partial(this.translateQuote, 'favorites', 'quotes')}
+                 {...this.state} />
     }
 
 
@@ -178,14 +179,10 @@ class FamousQuotesComponent extends React.Component {
                  <Tab>Favotites</Tab>
                </TabList>
                <TabPanel>
-                 {this.r_quotes('quotes-tabbed')}
+                 {this.r_quotes('tabbed')}
                </TabPanel>
                <TabPanel>
-                 <FilterableTable mod="favorites, hoverable-rows"
-                           data={this.state.favorites}
-                           onThClick={_.partial(this.sort, 'favorites')}
-                           onTrClick={this.removeFromFavorites}
-                           {...this.state} />
+                 {this.r_favorites('tabbed')}
                </TabPanel>
              </Tabs>
     }
@@ -208,7 +205,7 @@ class FamousQuotesComponent extends React.Component {
                  <Loader />
                  :
                  noFavorites ? 
-                   this.r_quotes('quotes-single')
+                   this.r_quotes('single')
                    :
                    this.r_tabs()
                }
