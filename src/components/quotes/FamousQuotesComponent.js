@@ -7,6 +7,7 @@ import _ from 'lodash'
 import Q from 'q'
 
 import FilterableTable from 'components/ui/FilterableTableComponent'
+import Loader from 'components/ui/LoaderComponent'
 import Creator from 'components/quotes/CreatorComponent'
 
 require('styles/quotes/FamousQuotes.styl');
@@ -25,7 +26,8 @@ const CONFIG = {
   quantities: {
     10: {checked: true},
     15: {checked: false},
-    25: {checked: false}
+    25: {checked: false},
+    50: {checked: false}
   }
 }
 
@@ -53,6 +55,7 @@ class FamousQuotesComponent extends React.Component {
         quotes: [],
         categories: CONFIG.categories,
         quantities: CONFIG.quantities,
+        isLoading: true,
       }
 
       let getQuote = (url, resolve, reject) => {
@@ -68,6 +71,10 @@ class FamousQuotesComponent extends React.Component {
 
 
       this.getQuotes = (n) => {
+        this.setState({
+          isLoading: true 
+        });
+
         let url = urlDispatcher({
           cat: this.state.categories
         })
@@ -93,7 +100,11 @@ class FamousQuotesComponent extends React.Component {
           (error) => {
             console.log("No quotes!!!!")
           }
-        )
+        ).finally(() => {
+          this.setState({
+            isLoading: false 
+          });
+        })
       }
 
 
@@ -147,10 +158,14 @@ class FamousQuotesComponent extends React.Component {
                         onCategoryUpdate={_.partial(this.handleCheckboxSelection, "categories")}
                         action={_.partial(this.getQuotes, quantity)}
                         {...this.state}/>
-               <FilterableTable mod="quotes"                        
-                           data={this.state.quotes}
-                           handleSort={this.handleSort}
-                           {...this.state} />
+               {this.state.isLoading ? 
+                 <Loader />
+                 :
+                 <FilterableTable mod="quotes, hoverable-rows"
+                             data={this.state.quotes}
+                             handleSort={this.handleSort}
+                             {...this.state} />
+               }
              </div>
     }
 }

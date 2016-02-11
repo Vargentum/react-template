@@ -1,13 +1,13 @@
 .ui-filterable-table
   table-layout fixed
-  border 1px solid red
   color alpha(#fff, .75)
 
   td
   th
-    padding 5px 10px
+    padding 10px
     border 1px solid alpha(#fff, .25)  
     text-align: left
+    line-height: 1.5
 
   th
     text-transform: capitalize
@@ -39,3 +39,21 @@
     th
       &:first-child
         width: 50% 
+        
+
+  &--hoverable-rows
+    td
+      transition color, background-color .2s
+    
+    tr:hover
+      
+      &
+        z-index: 1
+
+      td
+        color #fff
+        background-color alpha(#fff, .1)
+        z-index: 1
+
+
+
