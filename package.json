@@ -59,6 +59,7 @@
     "react-addons-update": "^0.14.3",
     "react-ajax": "^0.1.1",
     "react-hot-loader": "^1.2.9",
+    "react-tabs": "^0.5.3",
     "rimraf": "^2.4.3",
     "style-loader": "^0.13.0",
     "stylus": "~0.49.2",

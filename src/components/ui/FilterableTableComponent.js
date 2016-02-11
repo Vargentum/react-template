@@ -16,13 +16,13 @@ class FilterableTableComponent extends React.Component {
       let cls = {
         'is-asc': checkOrder('asc', key),
         'is-desc': checkOrder('desc', key),
-        'is-clickable': !!this.props.handleSort
+        'is-clickable': !!this.props.onThClick
       }
 
       return (
         <th key={key}
             className={classnames(cls)}
-            onClick={_.partial(this.props.handleSort, key)}>{key}</th>
+            onClick={_.partial(this.props.onThClick, key)}>{key}</th>
       )
     })
     return (
@@ -38,7 +38,8 @@ class FilterableTableComponent extends React.Component {
   r_body() {
     let rows = _.map(this.props.data, (row, i) => {
       let cells = _.map(row, (cell, i) => <td key={i}>{cell}</td>)
-      return (<tr key={i}>{cells}</tr>)
+      return (<tr key={i}
+                  onClick={_.partial(this.props.onTrClick, i)}>{cells}</tr>)
     })
 
     return (

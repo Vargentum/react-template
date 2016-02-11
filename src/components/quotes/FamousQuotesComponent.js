@@ -6,6 +6,8 @@ import update from 'react-addons-update'
 import _ from 'lodash'
 import Q from 'q'
 
+import {Tabs, TabList, Tab, TabPanel} from 'react-tabs'
+
 import FilterableTable from 'components/ui/FilterableTableComponent'
 import Loader from 'components/ui/LoaderComponent'
 import Creator from 'components/quotes/CreatorComponent'
@@ -53,6 +55,7 @@ class FamousQuotesComponent extends React.Component {
 
       this.state = {
         quotes: [],
+        favorites: [],
         categories: CONFIG.categories,
         quantities: CONFIG.quantities,
         isLoading: true,
@@ -108,11 +111,11 @@ class FamousQuotesComponent extends React.Component {
       }
 
 
-      this.handleSort = (type) => {
+      this.sort = (col, type) => {
         let order = this.state.order === 'asc' ? 'desc' : 'asc'
 
         this.setState({
-          quotes: _.sortByOrder(this.state.quotes, type ,order),
+          [col]: _.sortByOrder(this.state[col], type ,order),
           order: order,
           orderBy: type
         });
@@ -142,6 +145,49 @@ class FamousQuotesComponent extends React.Component {
           [col]: update(this.state[col], {[entry]: {checked: {$set: !checkedS}}})
         });
       }
+
+
+      this.addToFavorites = (idx) => {
+        this.setState({
+          favorites: update(this.state.favorites, {$push: [this.state.quotes[idx]]}) 
+        });
+      }
+
+
+      this.removeFromFavorites = (idx) => {
+        this.setState({
+          favorites: update(this.state.favorites, {$splice: [[idx, 1]]})
+        });
+      }
+
+    }
+
+    r_quotes(mod) {
+      return <FilterableTable mod={`quotes, hoverable-rows, ${mod}`}
+                data={this.state.quotes}
+                onThClick={_.partial(this.sort, 'quotes')}
+                onTrClick={this.addToFavorites}
+                {...this.state} />
+    }
+
+
+    r_tabs() {
+      return <Tabs>
+               <TabList>
+                 <Tab>Quotes</Tab>
+                 <Tab>Favotites</Tab>
+               </TabList>
+               <TabPanel>
+                 {this.r_quotes('quotes-tabbed')}
+               </TabPanel>
+               <TabPanel>
+                 <FilterableTable mod="favorites, hoverable-rows"
+                           data={this.state.favorites}
+                           onThClick={_.partial(this.sort, 'favorites')}
+                           onTrClick={this.removeFromFavorites}
+                           {...this.state} />
+               </TabPanel>
+             </Tabs>
     }
 
 
@@ -149,9 +195,9 @@ class FamousQuotesComponent extends React.Component {
       this.getQuotes(10)
     }
 
-
     render() {
       let quantity = _.findKey(this.state.quantities, ({checked}) => checked)
+      let noFavorites = _.isEmpty(this.state.favorites)
 
       return <div className="famousquotes-component">
                <Creator onQuantityUpdate={_.partial(this.handleRadioSelection, "quantities")}
@@ -161,10 +207,10 @@ class FamousQuotesComponent extends React.Component {
                {this.state.isLoading ? 
                  <Loader />
                  :
-                 <FilterableTable mod="quotes, hoverable-rows"
-                             data={this.state.quotes}
-                             handleSort={this.handleSort}
-                             {...this.state} />
+                 noFavorites ? 
+                   this.r_quotes('quotes-single')
+                   :
+                   this.r_tabs()
                }
              </div>
     }
