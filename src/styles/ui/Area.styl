@@ -1,0 +1,39 @@
+.area-component
+  height 500px
+  display flex
+  align-items center
+  justify-content center
+  flex-direction column
+  
+  font-size 13px
+  color alpha(#fff, .9)
+
+
+  &__icon
+    width 100px
+    height 100px
+    background-size contain
+    margin-bottom 20px
+    display none //hide by default
+    
+  &__title
+    font-size 18px
+    font-weight 400
+    color #fff
+    
+
+  $types = {
+    empty: {
+      icon: "https://cdn3.iconfinder.com/data/icons/49handdrawing/256x256/notepad.png"
+    },
+    error: {
+      icon: "https://cdn3.iconfinder.com/data/icons/49handdrawing/256x256/error.png"
+    }
+  }
+  
+  for k, v in $types
+    &--type-{k} &__icon
+      icon = v.icon
+      background-image: url(icon)
+      display block
+      
