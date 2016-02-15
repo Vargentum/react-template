@@ -56,8 +56,16 @@ class FamousQuotesComponent extends React.Component {
       this.displayName = 'FamousQuotesComponent';
 
       this.state = {
-        quotes: [],
-        favorites: [],
+        quotes: {
+          data: [],
+          order: null,
+          orderBy: null
+        },
+        favorites: {
+          data: [],
+          order: null,
+          orderBy: null
+        },
         categories: CONFIG.categories,
         quantities: CONFIG.quantities,
         isLoading: true,
@@ -104,7 +112,9 @@ class FamousQuotesComponent extends React.Component {
 
         Q.all(quotes)
           .then(quotes => {
-            this.setState({quotes});
+            this.setState({
+              quotes: update(this.state.quotes, {data: {$set: quotes}})
+            });
           })
           .catch(error => {
             this.setState({
@@ -121,12 +131,15 @@ class FamousQuotesComponent extends React.Component {
 
 
       this.sort = (col, type) => {
-        let order = this.state.order === 'asc' ? 'desc' : 'asc'
+        let currentCol = this.state[col]
+        let order = currentCol.order === 'asc' ? 'desc' : 'asc'
 
         this.setState({
-          [col]: _.sortByOrder(this.state[col], type ,order),
-          order: order,
-          orderBy: type
+          [col]: {
+            data: _.sortByOrder(currentCol.data, type ,order), 
+            order: order,
+            orderBy: type  
+          } 
         });
       }
 
@@ -158,12 +171,12 @@ class FamousQuotesComponent extends React.Component {
 
       this.translateQuote = (src, dest, idx) => {
         this.setState({
-          [dest]: update(this.state[dest], {$push: [this.state[src][idx]]}),
-          [src]: update(this.state[src], {$splice: [[idx, 1]]})
+          [dest]: update(this.state[dest], {data: {$push: [this.state[src].data[idx]]}}),
+          [src]: update(this.state[src], {data: {$splice: [[idx, 1]]}})
         });
       }
 
-      this.isCategoryEmpty = cat => _.isEmpty(this.state[cat]) && !this.state.isError
+      this.isCategoryEmpty = cat => _.isEmpty(this.state[cat].data) && !this.state.isError
     }
 
     r_quotes(mod) {
