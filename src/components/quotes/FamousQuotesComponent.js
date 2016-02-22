@@ -9,6 +9,7 @@ import Q from 'q'
 import {Tabs, TabList, Tab, TabPanel} from 'react-tabs'
 
 import FilterableTable from 'components/ui/FilterableTableComponent'
+import Area from 'components/ui/AreaComponent'
 import Loader from 'components/ui/LoaderComponent'
 import Creator from 'components/quotes/CreatorComponent'
 
@@ -18,6 +19,7 @@ const CONFIG = {
   url: "https://andruxnet-random-famous-quotes.p.mashape.com",
   headers: {
     "X-Mashape-Key": "6ZxCnFvSUkmshFVDJrAg9TszqTEJp1OvHeIjsnwqQ4akuwfrB5",
+    // "X-Mashape-Key": "6ZxCnFvSUkmshFVDJrAg9TszqTEJp1OvHeIjsnwqQ4akuwfr",
     "Content-Type": "application/x-www-form-urlencoded",
     "Accept": "application/json"
   },
@@ -54,28 +56,40 @@ class FamousQuotesComponent extends React.Component {
       this.displayName = 'FamousQuotesComponent';
 
       this.state = {
-        quotes: [],
-        favorites: [],
+        quotes: {
+          data: [],
+          order: null,
+          orderBy: null
+        },
+        favorites: {
+          data: [],
+          order: null,
+          orderBy: null
+        },
         categories: CONFIG.categories,
         quantities: CONFIG.quantities,
         isLoading: true,
+        isError: false
       }
 
       let getQuote = (url, resolve, reject) => {
-        qwest.get(url, null, {
-          headers: CONFIG.headers
-        })
-        .then((xhr, response) => {
-          resolve(JSON.parse(response))
-        }).then((xhr, error) => {
-          reject(error)
-        })
+        qwest
+          .get(url, null, {
+            headers: CONFIG.headers
+          })
+          .then((xhr, response) => {
+            resolve(JSON.parse(response))
+          })
+          .catch((e, xhr, response) => {
+            reject(e, response)
+          })
       }
 
 
       this.getQuotes = (n) => {
         this.setState({
-          isLoading: true 
+          isLoading: true,
+          isError: false
         });
 
         let url = urlDispatcher({
@@ -96,14 +110,19 @@ class FamousQuotesComponent extends React.Component {
           })
         })
 
-        Q.all(quotes).then(
-          (quotes) => {
-            this.setState({quotes});
-          },
-          (error) => {
-            console.log("No quotes!!!!")
-          }
-        ).finally(() => {
+        Q.all(quotes)
+          .then(quotes => {
+            this.setState({
+              quotes: update(this.state.quotes, {data: {$set: quotes}})
+            });
+          })
+          .catch(error => {
+            this.setState({
+              isError: true 
+            });
+            throw new Error(error.name)
+          })
+          .finally(() => {
           this.setState({
             isLoading: false 
           });
@@ -112,12 +131,15 @@ class FamousQuotesComponent extends React.Component {
 
 
       this.sort = (col, type) => {
-        let order = this.state.order === 'asc' ? 'desc' : 'asc'
+        let currentCol = this.state[col]
+        let order = currentCol.order === 'asc' ? 'desc' : 'asc'
 
         this.setState({
-          [col]: _.sortByOrder(this.state[col], type ,order),
-          order: order,
-          orderBy: type
+          [col]: {
+            data: _.sortByOrder(currentCol.data, type ,order), 
+            order: order,
+            orderBy: type  
+          } 
         });
       }
 
@@ -149,26 +171,45 @@ class FamousQuotesComponent extends React.Component {
 
       this.translateQuote = (src, dest, idx) => {
         this.setState({
-          [dest]: update(this.state[dest], {$push: [this.state[src][idx]]}),
-          [src]: update(this.state[src], {$splice: [[idx, 1]]})
+          [dest]: update(this.state[dest], {data: {$push: [this.state[src].data[idx]]}}),
+          [src]: update(this.state[src], {data: {$splice: [[idx, 1]]}})
         });
       }
+
+      this.isCategoryEmpty = cat => _.isEmpty(this.state[cat].data) && !this.state.isError
     }
 
     r_quotes(mod) {
-      return <FilterableTable mod={`quotes, hoverable-rows, quotes-${mod}`}
-                data={this.state.quotes}
-                onThClick={_.partial(this.sort, 'quotes')}
-                onTrClick={_.partial(this.translateQuote, 'quotes', 'favorites')}
-                {...this.state} />
+      return <div>
+              {this.isCategoryEmpty('quotes') ? 
+                <Area type="empty" title="There is no quotes. Whould you add a bit?" />
+                :
+                <FilterableTable mod={`quotes, hoverable-rows, quotes-${mod}`}
+                  data={this.state.quotes}
+                  onThClick={_.partial(this.sort, 'quotes')}
+                  onTrClick={_.partial(this.translateQuote, 'quotes', 'favorites')}
+                  {...this.state} />
+              }
+            </div>
+
+
+      
     }
 
     r_favorites(mod) {
-      return <FilterableTable mod={`favorites, hoverable-rows, favorites-${mod}`}
-                 data={this.state.favorites}
-                 onThClick={_.partial(this.sort, 'favorites')}
-                 onTrClick={_.partial(this.translateQuote, 'favorites', 'quotes')}
-                 {...this.state} />
+      return <div>
+              {this.isCategoryEmpty('favorites') ? 
+                <Area type="empty" title="Would you like to add some favorites?">
+                  You can add some quotes to this table by clicking onto them.
+                </Area>
+                :
+                <FilterableTable mod={`favorites, hoverable-rows, favorites-${mod}`}
+                   data={this.state.favorites}
+                   onThClick={_.partial(this.sort, 'favorites')}
+                   onTrClick={_.partial(this.translateQuote, 'favorites', 'quotes')}
+                   {...this.state} />
+              }
+      </div>
     }
 
 
@@ -194,20 +235,22 @@ class FamousQuotesComponent extends React.Component {
 
     render() {
       let quantity = _.findKey(this.state.quantities, ({checked}) => checked)
-      let noFavorites = _.isEmpty(this.state.favorites)
+      let isRenderTabs = !this.state.isLoading && !this.state.isError
 
       return <div className="famousquotes-component">
                <Creator onQuantityUpdate={_.partial(this.handleRadioSelection, "quantities")}
                         onCategoryUpdate={_.partial(this.handleCheckboxSelection, "categories")}
                         action={_.partial(this.getQuotes, quantity)}
                         {...this.state}/>
+               
+               {isRenderTabs ? 
+                 this.r_tabs() : null
+               }
                {this.state.isLoading ? 
-                 <Loader />
-                 :
-                 noFavorites ? 
-                   this.r_quotes('single')
-                   :
-                   this.r_tabs()
+                 <Area type="loading" title="Loading... Please, be patient." /> : null             
+               }
+               {this.state.isError ? 
+                 <Area type="error" title="Oops, there is an error here!">Try to reload the quotes</Area> : null
                }
              </div>
     }

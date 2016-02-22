@@ -13,12 +13,13 @@ class FilterableTableComponent extends React.Component {
     super(props)
 
     this.r_head = () => {
-      let checkOrder = (type, key) => this.props.order === type && this.props.orderBy === key
-      let tpl = _.first(this.props.data)
+      let {data, order, orderBy} = this.props.data
+      let isOrderEqual = (type, key) => order === type && orderBy === key
+      let tpl = _.first(data)
       let cells = _.map(tpl, (val, key) => {
         let cls = {
-          'is-asc': checkOrder('asc', key),
-          'is-desc': checkOrder('desc', key),
+          'is-asc': isOrderEqual('asc', key),
+          'is-desc': isOrderEqual('desc', key),
           'is-clickable': !!this.props.onThClick
         }
 
@@ -39,7 +40,8 @@ class FilterableTableComponent extends React.Component {
 
 
     this.r_body = () => {
-      let rows = _.map(this.props.data, (row, i) => {
+      let {data} = this.props.data
+      let rows = _.map(data, (row, i) => {
         let cells = _.map(row, (cell, i) => <td key={i}>{cell}</td>)
         return (<tr key={i}
                     onClick={_.partial(this.props.onTrClick, i)}>{cells}</tr>)
