@@ -7,16 +7,16 @@
 // import TestUtils from 'react-addons-test-utils';
 import createComponent from 'helpers/shallowRenderHelper';
 
-import SearchBarComponent from 'components//SearchBarComponent.js';
+import LoaderComponent from 'components/ui/LoaderComponent.js';
 
-describe('SearchBarComponent', () => {
+describe('LoaderComponent', () => {
     let component;
 
     beforeEach(() => {
-      component = createComponent(SearchBarComponent);
+      component = createComponent(LoaderComponent);
     });
 
     it('should have its component name as default className', () => {
-      expect(component.props.className).to.equal('searchbar-component');
+      expect(component.props.className).to.equal('loader-component');
     });
 });

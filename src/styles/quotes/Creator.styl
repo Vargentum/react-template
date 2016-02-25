@@ -1,2 +1,37 @@
 .creator-component
-  border 1px dashed #f00
+  margin-bottom 20px
+  display flex
+  align-items center
+  
+
+  &__fset
+    vertical-align: top
+    padding-left 30px
+    padding-right 30px
+    
+
+  &__fset_title
+    font-weight 400
+    color inherit
+    
+    &:first-letter
+      text-transform: uppercase
+      
+
+  &__field
+    display inline-block
+    margin-right 20px
+    cursor: pointer
+    
+    input
+      margin-right 5px
+
+    &:hover span
+      text-decoration: underline
+      
+  &__btn
+    background: green
+    color: #fff
+    padding: 10px 15px
+    border-radius 5px
+    margin-left: 15px

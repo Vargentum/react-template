@@ -7,16 +7,16 @@
 // import TestUtils from 'react-addons-test-utils';
 import createComponent from 'helpers/shallowRenderHelper';
 
-import CreateProductFormComponent from 'components//CreateProductFormComponent.js';
+import AreaComponent from 'components/ui/AreaComponent.js';
 
-describe('CreateProductFormComponent', () => {
+describe('AreaComponent', () => {
     let component;
 
     beforeEach(() => {
-      component = createComponent(CreateProductFormComponent);
+      component = createComponent(AreaComponent);
     });
 
     it('should have its component name as default className', () => {
-      expect(component.props.className).to.equal('createproductform-component');
+      expect(component.props.className).to.equal('empty-component');
     });
 });

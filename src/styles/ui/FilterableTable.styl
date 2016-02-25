@@ -1,13 +1,17 @@
 .ui-filterable-table
   table-layout fixed
-  border 1px solid red
   color alpha(#fff, .75)
+  width 100%
 
   td
   th
-    padding 5px 10px
+    padding 10px
     border 1px solid alpha(#fff, .25)  
     text-align: left
+    line-height: 1.5
+
+    &:first-child
+      width: 50% 
 
   th
     text-transform: capitalize
@@ -31,11 +35,57 @@
     &.is-desc:after
       -draw-triangle: bottom
     
+  texts = {
+    quotes: 'Click to add to favorites',
+    favorites: 'Click to remove from favorites'
+  }
+
+  for k, v in texts
+    &--{k} tr:hover td:last-child:before
+      content: v
+      
 
 
   &--quotes
-    width 100%
+  &--favorites
+    
+    tbody td
+      position: relative
+    
+    tr:hover td:last-child:before
+      display block
+      position absolute
+      top 0
+      right 0
+      bottom 0
+      font-size 14px
+      font-weight 500
+      background-color alpha(#fff, .4)
+      text-align: right
+      padding: 12px 20px
+
+
+
+  //add margin to prevent jumping when tabs appears
+  &--quotes-single
+    margin-top 63px
+    
+
+
+
+  &--hoverable-rows
     td
-    th
-      &:first-child
-        width: 50% 
+      transition color, background-color .2s
+    
+    tr:hover
+      
+      &
+        z-index: 1
+
+      td
+        color #fff
+        background-color alpha(#fff, .1)
+        z-index: 1
+
+
+
